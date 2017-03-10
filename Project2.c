@@ -211,7 +211,7 @@ int main(void)
         //this loop ensures no two players are in the same slot
         for (counter_2 = 0; counter_2 <= number_of_players; counter_2++) {
             for (counter = counter_2+1; counter <= number_of_players; counter++) {
-                if (all_positions[counter][1] == all_positions[counter + 1][1]) {
+                if (all_positions[counter_2][1] == all_positions[counter][1]) {
                     exit = 0;
                 }
             }
@@ -413,7 +413,7 @@ int main(void)
                 }
             }
             //if there is a player in previous slot but not next slot
-            
+
             if (adjacentslot_full == 1 && adjacentslot_full_2 == 0) {
                 printf("There is a player in the previous slot would you like to attack (attack) or move to the next slot (next)?");
                 scanf("%s", player_option);
@@ -423,30 +423,30 @@ int main(void)
                     ability_modification(counter);
                 }
                 //attack player behind
+                else if(strcmp(player_option, "attack") == 0) {
+                    //locate player in previous slot
+                    for (counter_2 = 0; counter_2 < number_of_players; counter_2++) {
+                        if(players_array[counter_2].position == players_array[counter].position - 1) {
+                            //view their stats and call necessary functions
+                            if (players_array[counter_2].strength <= 70) {
+                                printf("\nYou attacked\n");
 
+                                successful_attack(counter_2);
+                            }
+                            else if (players_array[counter_2].strength > 70) {
+                                printf("\nYou attacked\n");
 
-                else {
+                                failed_attack(counter, counter_2);
+                            }
+                        }
+                    }
+
+                }
+
+                else  {
                     printf("Please enter a valid option.");
                     counter--;
                 }
-            } else if(strcmp(player_option, "attack") == 0) {
-                //locate player in previous slot
-                for (counter_2 = 0; counter_2 < number_of_players; counter_2++) {
-                    if(players_array[counter_2].position == players_array[counter].position - 1) {
-                        //view their stats and call necessary functions
-                        if (players_array[counter_2].strength <= 70) {
-                            printf("\nYou attacked\n");
-
-                            successful_attack(counter_2);
-                        }
-                        else if (players_array[counter_2].strength > 70) {
-                            printf("\nYou attacked\n");
-
-                            failed_attack(counter, counter_2);
-                        }
-                    }
-                }
-
             }
             //if there is a player in the next slot but not the previous slot
             else if (adjacentslot_full_2 == 1 && adjacentslot_full == 0) {
@@ -544,7 +544,7 @@ int main(void)
                 //attack closest player
                 else if(strcmp(player_option, "attack") == 0) {
                     //find closest player
-                    for (counter_2 = 0; counter_2 < number_of_slots; counter_2++) {
+                    for (counter_2 = 0; counter_2 < number_of_players; counter_2++) {
                         //find closest player after player
                         if (players_array[counter].position < all_positions[counter_2][1]) {
                             if (all_positions[counter_2][1] - players_array[counter].position < lowest) {
@@ -559,7 +559,7 @@ int main(void)
                         }
                     }
                     //attack closest player after they are found
-                    for (counter_2 = 0; counter_2 < number_of_slots; counter_2++) {
+                    for (counter_2 = 0; counter_2 < number_of_players; counter_2++) {
                         if(players_array[counter_2].position == lowest) {
                             //call necessary functions
                             if (players_array[counter_2].strength <= 70) {
@@ -662,7 +662,6 @@ void ability_modification(int counter)
 void successful_attack(int counter_2)
 {
 
-    printf("%d", counter_2);
     players_array[counter_2].life_points = players_array[counter_2].life_points - (players_array[counter_2].strength / 2);
 
     printf("\n%s life points are now %d\n", players_array[counter_2].name, players_array[counter_2].life_points);
@@ -672,8 +671,6 @@ void successful_attack(int counter_2)
 void failed_attack(int counter, int counter_2)
 {
 
-    printf("%d\n", counter);
-    printf("%d\n", counter_2);
     players_array[counter].life_points = players_array[counter].life_points - (players_array[counter_2].strength * 0.3);
 
     printf("\n%s life points are now %d\n", players_array[counter_2].name, players_array[counter_2].life_points);
